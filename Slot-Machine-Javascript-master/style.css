@@ -1,0 +1,47 @@
+body {
+	background-image: linear-gradient(red, blue);
+	margin-left: 10%;
+	margin-right: 10%;
+	text-align: center;
+}
+
+.background {
+	border: 6px solid black;
+	border-radius: 20px;
+	padding: 6px;
+	background-color: white;
+	font-family: Serif;
+	height: 80%;
+}
+table, td, tr {
+	border: 4px solid black;
+	border-radius: 20px;
+	margin-left: 10%;
+	margin-right: 10%;
+	width: 80%;
+	text-align: center;
+}
+td {
+	height: 200px;
+	width: 200px;
+}
+
+button {
+	height: 50px;
+	width: 100px;
+}
+.button {
+	border: none;
+	height: 50px;
+	width: 100px;
+}
+.play {
+	width: 400px;
+}
+
+.bal {
+	border: 2px solid black;
+	border-radius: 20px;
+	margin-left: 40%;
+	margin-right: 40%;
+}

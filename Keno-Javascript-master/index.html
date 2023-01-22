@@ -1,0 +1,349 @@
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<audio id="AuDing"><source src="Audio/Ding.mp3" type="audio/mpeg"></audio>
+<audio id="AuToss"><source src="Audio/TossUp.mp3" type="audio/mpeg"></audio>
+<audio id="AuNewTiles"><source src="Audio/NewTiles.ogg" type="audio/ogg"></audio>
+<audio id="AuRestart"><source src="Audio/RestartAudio.mp3" type="audio/mpeg"></audio>
+<audio id="AuScore"><source src="Audio/ScoreAudio.mp3" type="audio/mpeg"></audio>
+
+<script>
+/********************
+Ephycis
+	Keno 
+	Due: 
+	This project will simulate the game Keno
+********************/
+
+//These are my audio variables. These get the audio source from the audios above. 
+var ding = document.getElementById("AuDing");
+var toss = document.getElementById("AuToss");
+var newTiles = document.getElementById("AuNewTiles");
+var restart = document.getElementById("AuRestart");
+var scoreAudio = document.getElementById("AuScore");
+
+//This is used to prevent you from selecting tiles while the game is playing
+var enabledFunc = true;
+
+//This is a counter for yellow tiles
+var r = 0;
+
+//This function allows you to click on tiles and change them to yellow. Using r as a counter you can only chose 10 tiles, and enabledFunc as a way to check if you can choose tiles at this time
+function ChangeYellow(id)
+{
+	if (enabledFunc == true)
+	{
+		//This checks to see if the tile you chose is already yellow
+		var yellows = document.getElementById(id).style.backgroundColor;
+		if (yellows != "yellow")
+		{
+			//If it is not already yellow you may select the tile, if not just escape the if 
+			if (r != 10)
+			{
+				document.getElementById(id).style.backgroundColor = "yellow";
+				
+				//Because you successfully chose a tile it adds 1 to the r counter
+				r++;
+			}
+		}
+	}
+}
+
+//This function restarts only the red tiles and leaves the ones that you picked still there.
+function Restart()
+{
+	//Debugging
+	console.log("Restart is being pressed");
+	
+	//Plays the restart audio
+	playAudio(restart);
+	
+	//This for-loop cycles through all the tiles by their id, which is the same as their number
+	for (x = 0; x < 80; x++)
+	{
+		//This gets their background-color from their style
+		var color = document.getElementById(x).style.backgroundColor;
+		
+		//This if-statement checks to see if the tile is red or green, but passes on yellow
+		if (color == "red")
+		{
+			//If red, change it to lightblue
+			document.getElementById(x).style.backgroundColor = "lightblue";
+		}
+		else if (color == "green")
+		{
+			//If green, because it is a tile you chose, change it back to yellow
+			document.getElementById(x).style.backgroundColor = "yellow";
+		}
+	}
+	
+	//Enables the Play button
+	document.getElementById("idPlayButton").disabled = false;
+}
+
+//This function restarts all the tiles on the board and refreshes the r counter to 0
+function NewTiles()
+{
+	//Plays the new tiles audio
+	playAudio(newTiles);
+	
+	//This for-loop cycles through all the tiles by their id, which is the same as their number
+	for (x = 0; x < 80; x++)
+	{
+		var color = document.getElementById(x).style.backgroundColor;
+		
+		document.getElementById(x).style.backgroundColor = "lightblue";
+	}
+	
+	r = 0;
+	
+	//Enables the Play button
+	document.getElementById("idPlayButton").disabled = false;
+}
+
+//This is the game itself
+function Play()
+{
+	//This disables all other buttons and diables selecting tiles
+	document.getElementById("idPlayButton").disabled = true;
+	document.getElementById("idRestartButton").disabled = true;
+	document.getElementById("idNewButton").disabled = true;
+	enabledFunc = false;
+	
+	//This defines a score and a counter named i
+	var score = 0;
+	var i = 0;
+	
+	//This is an array of all of the tiles
+	var Nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79];
+	
+	//Plays the output audio
+	playAudio(toss);
+	
+	//This calls the Output function
+	Output();
+	
+	//This function outputs the 20 random winning numbers
+	function Output()
+	{
+		//This is a loop that happens every second using i counter
+		//	It first takes out a random number from the arrey of 80 Nums 
+		//	Then logs the the number and logs the count of the Nums arrey to, making sure that it is subtracting from the array so there is no douplicates
+		//	Then it changes the background of that number to red
+		//	but if it is a selected tile (yellow), then change it to green and add a point to your score
+		//	Once it is finished, then run the Money function to get your amount won
+		if (i != 20)
+		{
+			var ranNum = Nums.splice(Math.floor(Math.random() * (Nums.length-1 + 1 - 1) + 1), 1);
+			console.log("Number "+ i + ": " + ranNum);
+			console.log(Nums.length);
+			
+			var color = document.getElementById(ranNum).style.backgroundColor;
+			
+			if (color == "yellow")
+			{
+				document.getElementById(ranNum).style.backgroundColor = "green";
+				score++;
+				playAudio(ding);
+			}
+			else
+			{
+				document.getElementById(ranNum).style.backgroundColor = "red";
+			}
+			
+			i++;
+			setTimeout(Output, 1000);
+		}
+		else
+		{
+			Money(score);
+			
+			//Plays a score sound when displaying the score
+			playAudio(scoreAudio);
+			
+			//Reenables the buttons and ability to select tiles again
+			enabledFunc = true;
+			document.getElementById("idRestartButton").disabled = false;
+			document.getElementById("idNewButton").disabled = false;
+			
+			return;
+		}
+	}
+}
+
+//This fucntion takes your score and finds out how much money you won, it takes the parameter score to do this
+function Money(score)
+{
+	//Makes the money variable
+	var money;
+	
+	//Tests the score value with an if statement (this could be done with a case, but it works either way)
+	if (score == 3)
+	{
+		money = 50;
+	}
+	else if (score == 4)
+	{
+		money = 100;
+	}
+	else if (score == 5)
+	{
+		money = 200;
+	}
+	else if (score == 6)
+	{
+		money = 500;
+	}
+	else if (score == 7)
+	{
+		money = 1000;
+	}
+	else if (score == 8)
+	{
+		money = 2500;
+	}
+	else if (score == 9)
+	{
+		money = 5000;
+	}
+	else
+	{
+		money = 0;
+	}
+	
+	//Prints your score and money to the top of the gride
+	document.getElementById("idText").innerHTML = "Your Score is: " + score + ", You win: $" + money;
+}
+
+//This function uses an audio variable parameter, a, and plays it.
+function playAudio(a)
+{
+	a.play();
+}
+
+</script>
+</head>
+
+<body>
+
+<div align="center"><img src="Keno.png"></div>
+
+<div id="idText" align="center">Score</div>
+
+<table align="center">
+	<tr>
+		<td id="0" onClick="ChangeYellow('0')">0</td>
+		<td id="1" onClick="ChangeYellow('1')">1</td>
+		<td id="2" onClick="ChangeYellow('2')">2</td>
+		<td id="3" onClick="ChangeYellow('3')">3</td>
+		<td id="4" onClick="ChangeYellow('4')">4</td>
+		<td id="5" onClick="ChangeYellow('5')">5</td>
+		<td id="6" onClick="ChangeYellow('6')">6</td>
+		<td id="7" onClick="ChangeYellow('7')">7</td>
+		<td id="8" onClick="ChangeYellow('8')">8</td>
+		<td id="9" onClick="ChangeYellow('9')">9</td>
+	</tr>
+	<tr>
+		<td id="10" onClick="ChangeYellow('10')">10</td>
+		<td id="11" onClick="ChangeYellow('11')">11</td>
+		<td id="12" onClick="ChangeYellow('12')">12</td>
+		<td id="13" onClick="ChangeYellow('13')">13</td>
+		<td id="14" onClick="ChangeYellow('14')">14</td>
+		<td id="15" onClick="ChangeYellow('15')">15</td>
+		<td id="16" onClick="ChangeYellow('16')">16</td>
+		<td id="17" onClick="ChangeYellow('17')">17</td>
+		<td id="18" onClick="ChangeYellow('18')">18</td>
+		<td id="19" onClick="ChangeYellow('19')">19</td>
+	</tr>
+	<tr>
+		<td id="20" onClick="ChangeYellow('20')">20</td>
+		<td id="21" onClick="ChangeYellow('21')">21</td>
+		<td id="22" onClick="ChangeYellow('22')">22</td>
+		<td id="23" onClick="ChangeYellow('23')">23</td>
+		<td id="24" onClick="ChangeYellow('24')">24</td>
+		<td id="25" onClick="ChangeYellow('25')">25</td>
+		<td id="26" onClick="ChangeYellow('26')">26</td>
+		<td id="27" onClick="ChangeYellow('27')">27</td>
+		<td id="28" onClick="ChangeYellow('28')">28</td>
+		<td id="29" onClick="ChangeYellow('29')">29</td>
+	</tr>
+	<tr>
+		<td id="30" onClick="ChangeYellow('30')">30</td>
+		<td id="31" onClick="ChangeYellow('31')">31</td>
+		<td id="32" onClick="ChangeYellow('32')">32</td>
+		<td id="33" onClick="ChangeYellow('33')">33</td>
+		<td id="34" onClick="ChangeYellow('34')">34</td>
+		<td id="35" onClick="ChangeYellow('35')">35</td>
+		<td id="36" onClick="ChangeYellow('36')">36</td>
+		<td id="37" onClick="ChangeYellow('37')">37</td>
+		<td id="38" onClick="ChangeYellow('38')">38</td>
+		<td id="39" onClick="ChangeYellow('39')">39</td>
+	</tr>
+	<tr>
+		<td id="40" onClick="ChangeYellow('40')">40</td>
+		<td id="41" onClick="ChangeYellow('41')">41</td>
+		<td id="42" onClick="ChangeYellow('42')">42</td>
+		<td id="43" onClick="ChangeYellow('43')">43</td>
+		<td id="44" onClick="ChangeYellow('44')">44</td>
+		<td id="45" onClick="ChangeYellow('45')">45</td>
+		<td id="46" onClick="ChangeYellow('46')">46</td>
+		<td id="47" onClick="ChangeYellow('47')">47</td>
+		<td id="48" onClick="ChangeYellow('48')">48</td>
+		<td id="49" onClick="ChangeYellow('49')">49</td>
+	</tr>
+	<tr>
+		<td id="50" onClick="ChangeYellow('50')">50</td>
+		<td id="51" onClick="ChangeYellow('51')">51</td>
+		<td id="52" onClick="ChangeYellow('52')">52</td>
+		<td id="53" onClick="ChangeYellow('53')">53</td>
+		<td id="54" onClick="ChangeYellow('54')">54</td>
+		<td id="55" onClick="ChangeYellow('55')">55</td>
+		<td id="56" onClick="ChangeYellow('56')">56</td>
+		<td id="57" onClick="ChangeYellow('57')">57</td>
+		<td id="58" onClick="ChangeYellow('58')">58</td>
+		<td id="59" onClick="ChangeYellow('59')">59</td>
+	</tr>
+	<tr>
+		<td id="60" onClick="ChangeYellow('60')">60</td>
+		<td id="61" onClick="ChangeYellow('61')">61</td>
+		<td id="62" onClick="ChangeYellow('62')">62</td>
+		<td id="63" onClick="ChangeYellow('63')">63</td>
+		<td id="64" onClick="ChangeYellow('64')">64</td>
+		<td id="65" onClick="ChangeYellow('65')">65</td>
+		<td id="66" onClick="ChangeYellow('66')">66</td>
+		<td id="67" onClick="ChangeYellow('67')">67</td>
+		<td id="68" onClick="ChangeYellow('68')">68</td>
+		<td id="69" onClick="ChangeYellow('69')">69</td>
+	</tr>
+	<tr>
+		<td id="70" onClick="ChangeYellow('70')">70</td>
+		<td id="71" onClick="ChangeYellow('71')">71</td>
+		<td id="72" onClick="ChangeYellow('72')">72</td>
+		<td id="73" onClick="ChangeYellow('73')">73</td>
+		<td id="74" onClick="ChangeYellow('74')">74</td>
+		<td id="75" onClick="ChangeYellow('75')">75</td>
+		<td id="76" onClick="ChangeYellow('76')">76</td>
+		<td id="77" onClick="ChangeYellow('77')">77</td>
+		<td id="78" onClick="ChangeYellow('78')">78</td>
+		<td id="79" onClick="ChangeYellow('79')">79</td>
+	</tr>
+</table>
+
+<div>
+	<button id="idPlayButton"onClick="Play()">Play</button>
+	<button id="idRestartButton" onClick="Restart()">Restart</button>
+	<button id="idNewButton"onClick="NewTiles()">New-Tiles</button>
+</div>
+
+<div>
+	<h3>
+		Welcome to Keno! In this game you chose <font color="yellow">10</font> tiles on the board, then the computer choses <font color="red">20</font> tiles of the board too. If your tiles match the ones the computer chose then you get a <font color="green">point</font>. Earning 3 or more points grants you money back.
+		<br>
+		You can chose your tiles whenever you like. Press Play to start the game, Restart to restart the game, and New-Tiles to pick new tiles.
+	</h3>
+</div>
+
+</body>
+</html>

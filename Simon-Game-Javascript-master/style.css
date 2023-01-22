@@ -1,0 +1,15 @@
+h1 {
+	font-size: 48px;
+}
+
+table {
+	border: solid black 2px;
+	width: 80%;
+	background-color: black;
+}
+td {
+	border: solid black 2px;
+	background-color: white;
+	width: 200px;
+	text-align: center;
+}

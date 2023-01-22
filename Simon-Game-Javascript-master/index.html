@@ -1,0 +1,281 @@
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<audio id="AuLose"><source src="audio/LoseAudio.mp3" type="audio/mpeg"></audio>
+<audio id="AuWin"><source src="audio/WinAudio.mp3" type="audio/mpeg"></audio>
+
+<script>
+/********************
+Ephycis
+	Simon Game
+	Simon Says Game
+********************/
+
+var attempt = 0;
+
+var array = [];
+var level = 0;
+var playerTurnBool = false;
+
+var highscore = 0;
+
+//Audio variables
+var auLose = document.getElementById("AuLose");
+var auWin = document.getElementById("AuWin");
+
+//This only gets called when the play button is pressed
+function Initallization()
+{
+	//The level goes back to 0
+	//The array gets cleared
+	//+1 is added to Attempts
+	level = 0;
+	array = [];
+	attempt++;
+	
+	//Plays audio, don't mind the 'Win' 
+	playAudio(auWin);
+	
+	//prints your attempts
+	document.getElementById("id_attempt").innerHTML = attempt;
+	
+	//prints highscore if it isn't already there
+	document.getElementById("id_text").innerHTML = "Highighscore: " + highscore;
+	
+	//Calls StepOne
+	StepOne();
+}
+
+//This is where the computer picks
+function StepOne()
+{
+	//Some initalization, clears playerHand, player can't choose, and the play button is disabled
+	playerArray = []
+	playerTurnBool = false;
+	document.getElementById("id_play").disabled = true;
+	
+	//This will make the level position in the array a random value
+	array[level] = Math.floor(Math.random() * 4);
+	
+	//Updates the level, as well increaments it
+	level++;
+	document.getElementById("id_level").innerHTML = level;
+	
+	console.log("We are a GO for play! Array: " + array + ", PlayerArray: " + playerArray + ", PlayerTurnBool: " + playerTurnBool + ", Level: " + level);
+	
+	//Starts the Change loop
+	var i = 0;
+	Change(i);
+
+	//Because Javascript just finishes the loop instantly
+	//This makes you wait to return your permissions to pick
+	var waitTime = level * 2000;
+	console.log(waitTime);
+	
+	//Permissions is called in waitTime seconds
+	setTimeout(Permissions, waitTime);
+}
+
+//This function acts like a for-loop, but will wait in between each repetition 
+function Change(i)
+{	
+	if (i <= (array.length - 1))
+	{
+		//Passes the val which is the array[i]
+		Display(array[i]);
+		
+		//Increments i
+		i++;
+		
+		//Calls the loop again in 2 seconds
+		setTimeout(Change, 2000, i);
+	}
+}
+
+//This function Displays the tile when selected
+function Display(val)
+{
+	//Without this, getElementById would messup
+	val.toString();
+	
+	//Displays the selected tile by taking in val
+	//Selected version = 0,1,3,4.jpg
+	document.getElementById(val).src = "images/" + val + ".jpg";
+	
+	console.log("Displayed " + val + " as selected");
+	
+	//Changes the tile back
+	setTimeout(ChangeBack, 1000, val);
+}
+//Changes the tile back, takes in val
+function ChangeBack(val)
+{
+	console.log("Changing " + val + " back to:");
+	
+	//Depending on what val is will determinds what the tile will be changed back to
+	if (val == 0)
+	{
+		//Changes red back to red
+		document.getElementById(val).src = "images/red.jpg";
+		
+		console.log("Red");
+	}
+	else if (val == 1)
+	{
+		//Changes blue back to blue
+		document.getElementById(val).src = "images/blue.jpg";
+		
+		console.log("Blue");
+	}
+	else if (val == 2)
+	{
+		//Changes yellow back to yellow
+		document.getElementById(val).src = "images/yellow.jpg";
+		
+		console.log("Yellow");
+	}
+	else if (val == 3)
+	{
+		//Changes green back to green
+		document.getElementById(val).src = "images/green.jpg";
+		
+		console.log("Green");
+	}
+}
+
+//This gives you back permissions to choose tiles
+function Permissions()
+{
+	playerTurnBool = true;
+	console.log("Permissions are back, it is the player's turn");
+	
+	document.getElementById("id_time").innerHTML = "Choose Now";
+	
+	//Starts the counter that counts down 30 seconds
+	//setTimeout(CountDown, 1000, 30);
+}
+
+//This is how the player picks
+function StepTwo(obj)
+{
+	if (playerTurnBool)
+	{
+		//If true, means that the player can now choose their tiles
+		playerArray.push(obj.id);
+		
+		console.log("Selected: " + obj.id + ", PlayerArray: " + playerArray);
+		
+		//Uses the id to Display that said tile was selected
+		Display(obj.id);
+		
+		console.log("playerArray: " + playerArray + ", array: " + array);
+		
+		//This will compare your choices with the array
+		if (playerArray[playerArray.length-1] == array[playerArray.length-1])
+		{
+			//True
+			console.log("Correct");
+			
+			//If the arrays are the same size
+			if (playerArray.length == array.length)
+			{
+				//You Win because you chose all the correct tiles, in the correct order, and have an array that is the same size as the computer's array
+				console.log("You win, move on");
+				
+				//To make sure you don't keep pressing the buttons
+				playerTurnBool = false;
+				
+				//This will check to see if you got a new highscore
+				if (playerArray.length > highscore)
+				{
+					//If so, your playerArray.length is the same as the level which can be put for the highscore
+					highscore = playerArray.length;
+					
+					//Prints highscore
+					document.getElementById("id_text").innerHTML = "Highighscore: " + highscore;
+				}
+				
+				//Moves on
+				setTimeout(Win, 2000);
+			}
+		}
+		else
+		{
+			//False
+			console.log("False");
+			
+			//Plays audio
+			playAudio(auLose);
+			
+			//To make sure you don't keep pressing the buttons
+			playerTurnBool = false;
+			
+			//You Lose
+			setTimeout(Lose, 2000);
+		}
+	}
+	else
+	{
+		//Not your turn
+		console.log("Not your turn");
+	}
+}
+
+function Win()
+{
+	//Clears the reminder
+	document.getElementById("id_time").innerHTML = "";
+	
+	//Next Round
+	StepOne();
+}
+
+function Lose()
+{
+	alert("You Loose, Try Again?");
+	
+	//Clears the reminder
+	document.getElementById("id_time").innerHTML = "";
+	
+	//Unlocks the play button
+	document.getElementById("id_play").disabled = false;
+}
+
+//This function uses an audio variable parameter, a, and plays it.
+function playAudio(a)
+{
+	a.play();
+}
+
+</script>
+</head>
+
+<center>
+	
+<h1>Simon Game</h1>
+
+<p>For this game a sequence will play for you on the left. Your job is to remember the sequence and play it back once the red "Choose Now" appears.</p>
+<p><b id="id_text">Good Luck!</b></p>
+
+<table>
+	<tr>
+		<td><img id="0" width="100%" src="images/red.jpg" onClick="StepTwo(this)"></img></td>
+		<td><img id="1" width="100%" src="images/blue.jpg" onClick="StepTwo(this)"></img></td>
+		<td><button id="id_play" width="100%" height="100%" onClick="Initallization()"><h2>Play</h2></button></td>
+		<td><h2>Level: </h2><font id="id_level" size="16px" color="blue">0</font></td>
+	</tr>
+	<tr>
+		<td><img id="2" width="100%" src="images/yellow.jpg" onClick="StepTwo(this)"></img></td>
+		<td><img id="3" width="100%" src="images/green.jpg" onClick="StepTwo(this)"></img></td>
+		<td><font id="id_time" size="16px" color="red"></font></td>
+		<td><h2>Attempt: </h2><font id="id_attempt" size="16px" color="green">0</font></td>
+	</tr>
+</table>
+
+</center>
+
+<body>
+</body>
+</html>

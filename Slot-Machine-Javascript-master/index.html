@@ -1,0 +1,42 @@
+<!--Ephycis-->
+<html>
+
+<head>
+	<title>Slots</title>
+	<!--Links the style sheet -->
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<!--Links the javascript sheet -->
+	<script src="Scripts/objects.js"></script>
+</head>
+
+<body>
+	<div class="background">
+		<h1>Welcome To New IST Casino Slots</h1>
+		<p>The goal of this game is to get 3 same or 3 different. Everytime you play it will cost $5, everytime you win 3 different you will get back $5, and everytime you win 3 same you will get back $10. Your balance will be shown at the bottom (hopefully you don't end up owing us money), press PLAY to start.</p>
+		<br>
+		<table class="slot">
+			<tr>
+				<th>Take</th>
+				<th>The</th> 
+				<th>Chance</th>
+			</tr>
+			<tr>
+				<td id="A"></td>
+				<td id="B"></td>
+				<td id="C"></td>
+			</tr>
+			<!--<tr>
+				<td class="button"><button onclick="playA()">Play</button></td>
+				<td class="button"><button onclick="playB()">Play</button></td>
+				<td class="button"><button onclick="playC()">Play</button></td>
+			</tr>-->
+		</table>
+		<br>
+		<button class="play" onclick="slots()">PLAY</button>
+		<br>
+		<div id="result"></div>
+		<br>
+		<div id="bal" class="bal"></div>
+		<div id="lol"></div>
+	</div>
+</body>

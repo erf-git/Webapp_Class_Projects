@@ -1,0 +1,38 @@
+<head>
+<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+<script type="text/javascript">
+	var zoom = 100;
+	var unzoom = zoom;
+	function zoomIn() {
+		zoom *= 1.25;
+		var percent = zoom.toString() + "%";
+		document.body.style.zoom = percent;
+		unzoom = zoom * 0.8;
+		var unpercent = unzoom.toString() + "%";
+		$(".tpButtons").css("zoom", unpercent);
+	}
+	function zoomOut() {
+		zoom /= 1.25;
+		var percent = zoom.toString() + "%";
+		document.body.style.zoom = percent;
+		unzoom = zoom / 0.8;
+		var unpercent = unzoom.toString() + "%";
+		$(".tpButtons").css("zoom", unpercent);
+	}
+</script>
+<style>
+button {
+	border: none;
+	background-color: white;
+}
+.tpButtons {
+	zoom: 100%;
+	text-align: right;
+}
+</style>
+<head>
+
+<body>
+<button class="tpButtons" onclick="zoomIn()"><i class="fas fa-search-plus"></i></button>
+<button class="tpButtons" onclick="zoomOut()"><i class="fas fa-search-minus"></i></button>
+</body>

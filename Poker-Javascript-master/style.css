@@ -1,0 +1,32 @@
+/*Ethan Feldman*/
+
+body {
+	background-color: black;
+	color: white
+}
+.BigImage {
+	margin-left: 45%;
+}
+p {
+	font-size: 32px;
+}
+
+table {
+	margin-left: 10%;
+	width: 80%;
+}
+table, tr, td {
+	text-align: center;
+	border: 2px solid white;
+	background-color: red;
+}
+td {
+	padding: 20px;
+}
+img {
+	border: 2px solid black;
+}
+
+.Button {
+	
+}

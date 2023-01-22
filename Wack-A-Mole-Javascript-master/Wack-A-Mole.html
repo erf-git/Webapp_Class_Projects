@@ -1,0 +1,132 @@
+<html>
+<head>
+
+<title>Wack-A-Mole</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<script>
+/****************
+Ephycis
+	Wack-A-Mole
+	Due: 9-12-2018
+	This program demonstrates a Wack-A-Mole game with increasing difficulty, a start button, a count down timer, and a score variable
+****************/
+
+//Bellow defines some variables and arrays before we start
+var Moles = ['TopLef', 'TopMid', 'TopRig', 'MidLef', 'MidMid', 'MidRig', 'BotLef', 'BotMid', 'BotRig'];
+var bool = 1;
+var score = 0;
+
+//This function just resets the bool to true.
+function BoolResest()
+{
+	bool = 1;
+}
+
+//This make the Moles spawn on the page, as well it take two numbers for a random spawning rate
+function MolePopUp(max, min)
+{
+	//This uses a bool to check if it can spawn a mole
+	if (bool == 1)
+	{
+		button.disabled = true;																			//To disabled the button while the code is playing
+		
+		var ranMole = Moles[Math.floor(Math.random() * (8 - 0 + 1) + 0)];								//This gets a random mole from the list Moles
+		
+		document.getElementById(ranMole).src = 'images/mole.png';										//Sets image of the specified mole by using it's id
+		
+		var ranNum = Math.floor(Math.random() * (max - min + 1) + min);									//This creates a random number from the max and min, this number will be used as an amount of time in mm later
+		console.log(ranNum);																			//Logging it to make sure it is reasonable
+		
+		setTimeout(Reset, 1500, ranMole);																//The moles will go down, if no clicked, after 1.5 seconds
+		
+		max *= 0.92;																					//After every iteration of MolePopUp(), the max will slowly get faster
+		setTimeout(MolePopUp, ranNum, max, min);														//after the ranNum amount of time it will play the MolePopUp() function with the max and min parameters
+	}
+	else
+	{
+		score = 0;																						//This resets the score
+	}	
+}
+
+//This function lets you click the images and determined if the image is a mole
+function Click(i)
+{
+	//This gets the clicked image's id and checks to see if it matches the picture in the indexOf
+	if (document.getElementById(i).src.indexOf('mole.png') != -1)
+	{
+		document.getElementById(i).src = 'images/pow.png';												//If a mole is the image clicked, then change it to the pow image
+		
+		setTimeout(Reset, 500, i);																		//Resets the image to the hole image after 0.5 seconds with the Reset() function
+		
+		score++;																						//Increases the score by 1
+		document.getElementById("scoreId").innerHTML = "Score: " + score;								//Prints the score to the scoreId <p>
+	}
+}
+
+//Resets the image to a hole image, uses the parameter r where r is the image's id
+function Reset(r)
+{
+	document.getElementById(r).src = 'images/hole.png';
+}
+
+//This takes a number of seconds specified, with the parameter count, and counts down from there
+function CountDown(count)
+{
+	//This will stop counter when the counter reaches 0
+	if (count == 0)
+	{
+		//Using the Moles array and a variable x, it changes all images to hole image by looping
+		for (var x of Moles)
+		{
+			document.getElementById(x).src = 'images/hole.png';
+		}
+		
+		bool = 0;																						//Because the time has ended, it changes the bool back to false, disabling the MolePopUp() function until the button is clicked 
+		button.disabled = false;																		//Enables the button to be presses again
+		return;																							//Ends the function, canceling anything after it
+	}
+	
+	count--;																							//Subtracts the count, aka counting down
+	document.getElementById("countId").innerHTML = count;												//Printing the count to the countId <p>
+	
+	setTimeout(CountDown, 1000, count);																	//Calls the CountDown() function from itself while carring the new count with it
+}
+
+</script>
+
+</head>
+<body>
+
+<!--The Table where the moles go, this game is meant for the window to be smaller/smart-bord ratio-->
+<table>
+	<tr>
+		<td><img id="TopLef" onClick="Click('TopLef')" src="images/hole.png" width="100%" height="45%"></td>
+		<td><img id="TopMid" onClick="Click('TopMid')" src="images/hole.png" width="100%" height="45%"></td>
+		<td><img id="TopRig" onClick="Click('TopRig')" src="images/hole.png" width="100%" height="45%"></td>
+	</tr>
+	<tr>
+		<td><img id="MidLef" onClick="Click('MidLef')" src="images/hole.png" width="100%" height="45%"></td>
+		<td><img id="MidMid" onClick="Click('MidMid')" src="images/hole.png" width="100%" height="45%"></td>
+		<td><img id="MidRig" onClick="Click('MidRig')" src="images/hole.png" width="100%" height="45%"></td>
+	</tr>
+	<tr>
+		<td><img id="BotLef" onClick="Click('BotLef')" src="images/hole.png" width="100%" height="45%"></td>
+		<td><img id="BotMid" onClick="Click('BotMid')" src="images/hole.png" width="100%" height="45%"></td>
+		<td><img id="BotRig" onClick="Click('BotRig')" src="images/hole.png" width="100%" height="45%"></td>
+	</tr>
+</table>
+
+<!--This is a second table to just house the button, text, timer, and score-->
+<table class="T2">
+	<tr>
+		<td class="D2">
+			<button id="button" onClick="BoolResest(), MolePopUp(2000, 500), CountDown(31)" style="font-size:20px;">Start</button>
+			<div style="text-align:center;">Hello! This game is Wack-A-Mole and works fairly similar to it. Moles will start appearing out of the holes and your job is to click them before they hid back down. But watch out, this starts off slowly but in the end will get much faster.<br>Good Luck!</div>
+		</td>
+		<td class="D2"><b><p id="countId" style="color:red;"></p></b></td>
+		<td class="D2"><p id="scoreId"></p></td>
+	</tr>
+</table>
+
+</body>

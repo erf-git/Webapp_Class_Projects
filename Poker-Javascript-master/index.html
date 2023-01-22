@@ -1,0 +1,190 @@
+<html>
+<head>
+<title></title>
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<script>
+/********************
+Ephycis
+	Poker
+	Due: (Date)
+	This project simulates a game of poker
+********************/
+
+function LoadingFunc()
+{
+	document.getElementById("idNewButton").disabled = true;
+	document.getElementById("idConButton").disabled = true;
+}
+
+var cardsArray;
+var houseHand;
+var playerHand;
+var playerScore;
+var houseScore;
+
+function Play() 
+{
+	document.getElementById("idPlayButton").disabled = true;
+	
+	playerScore = 0;
+	houseScore = 0;
+	
+	cardsArray = ['Sa', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'Sj', 'Sq', 'Sk', 'Ha', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'Hj', 'Hq', 'Hk', 'Da', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'Dj', 'Dq', 'Dk', 'Ca', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'Cj', 'Cq', 'Ck'];
+	houseHand = [];
+	playerHand = [];
+	
+	GenCards(0);
+	
+	setTimeout(Next, 4000);
+	
+}
+
+function GenCards(i)
+{
+	if (i < 10)
+	{
+		var ranCard = cardsArray.splice(Math.floor(Math.random() * (cardsArray.length-1 + 1 - 1) + 1), 1);
+		console.log("Card " + i + ": " + ranCard + ", # of Cards left: " + cardsArray.length);
+		
+		document.getElementById(i).src = "images/" + ranCard + ".jpg";
+		
+		if (i % 2 == 0)
+		{
+			houseHand.push(ranCard);
+		}
+		else
+		{
+			playerHand.push(ranCard);
+		}
+		
+		i++;
+		
+		setTimeout(GenCards, 350, i);
+	}
+}
+
+function Next()
+{
+	console.log("House: " + houseHand);
+	console.log("Player: " + playerHand);
+	
+	alert("Press the 'New Hand' button to get a new hand or Continue to go to score");
+	
+	document.getElementById("idNewButton").disabled = false;
+	document.getElementById("idConButton").disabled = false;
+
+}
+
+function NewHand()
+{
+	document.getElementById("idConButton").disabled = false;
+	
+	playerHand = [];
+	
+	NewGenCards(1);
+	
+	setTimeout(Score, 3000);
+}
+
+function NewGenCards(i)
+{
+	if (i < 10)
+	{
+		if (i % 2 == 1)
+		{
+			var ranCard = cardsArray.splice(Math.floor(Math.random() * (cardsArray.length-1 + 1 - 1) + 1), 1);
+			console.log("Card " + i + ": " + ranCard + ", # of Cards left: " + cardsArray.length);
+			
+			document.getElementById(i).src = "images/" + ranCard + ".jpg";
+			
+			i++;
+		}
+		else
+		{
+			i++;
+		}
+		
+		setTimeout(NewGenCards, 250, i);
+	}
+}
+
+function Score()
+{
+	document.getElementById("idNewButton").disabled = true;
+	document.getElementById("idConButton").disabled = true;
+	
+	ContrastCards(playerHand, playerScore, 'playerScore');
+	ContrastCards(houseHand, houseScore, 'houseScore');
+	
+	document.getElementById("idNewButton").disabled = false;
+	document.getElementById("idConButton").disabled = false;
+}
+
+function ContrastCards(hand, score, name)
+{
+	var values = ['a', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'j', 'q', 'k'];
+	
+	for (var i = 0; i < 13; i++)
+	{
+		var maches = hand.filter(hand => hand.includes(values[i]));				//This sucksssssssssssssssssss
+		
+		console.log(maches);
+		
+		if (maches.length == 2)
+		{
+			score += 2;
+		}
+		else if (maches.length == 3)
+		{
+			score += 3;
+		}
+		else if (maches.length == 4)
+		{
+			score += 4;
+		}
+	}
+	
+	document.getElementById(name).innerHTML = score;
+}
+
+</script>
+</head>
+
+<body onLoad="LoadingFunc()">
+
+<img class="BigImage" src="images/poker.jpg" height="70px">
+
+<p>House:</p>
+<p><b><font id="houseScore" color="red"></font></b></p>
+<table>
+	<tr>
+		<td><img width="112px" height="150px" id="0" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="2" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="4" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="6" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="8" src="images/blank.jpg"></td>
+	</tr>
+</table>
+
+<p>Player: </p>
+<p><b><font id="playerScore" color="red"></font></b></p>
+<table>
+	<tr>
+		<td><img width="112px" height="150px" id="1" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="3" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="5" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="7" src="images/blank.jpg"></td>
+		<td><img width="112px" height="150px" id="9" src="images/blank.jpg"></td>
+	</tr>
+</table>
+
+<br>
+
+<span>
+	<button class="Button" id="idPlayButton" onClick="Play()">Play</button>
+	<button class="Button" id="idNewButton" onClick="NewHand()">New Hand</button>
+	<button class="Button" id="idConButton" onClick="Score()">Continue</button>
+
+</body>
+</html>
